@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        tools:context=".MainActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.chan.widget.VerticalSeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_weight="1"
+            app:backgroundColor="@color/color_background"
+            app:defaultImage="@drawable/ic_volume_down_black_48dp"
+            app:defaultValue="140"
+            app:imageEnabled="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:libCornerRadius="20"
+            app:max="300"
+            app:maxImage="@drawable/ic_volume_up_black_48dp"
+            app:minImage="@drawable/ic_volume_off_black_48dp"
+            app:progressColor="@color/color_progress"
+            app:step="5"
+            app:textBottomPadding="20"
+            app:textColor="#FF0000"
+            app:textEnabled="true"
+            app:textSize="12sp"
+            app:touchDisabled="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

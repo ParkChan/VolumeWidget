@@ -1,2 +1,3 @@
+include ':VerticalSeekbar'
 include ':app'
 rootProject.name = "VolumeWidget"
