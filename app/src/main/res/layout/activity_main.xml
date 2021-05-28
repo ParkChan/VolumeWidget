@@ -16,26 +16,27 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
             android:layout_weight="1"
             app:backgroundColor="@color/color_background"
             app:defaultImage="@drawable/ic_volume_down_black_48dp"
-            app:defaultValue="140"
             app:imageEnabled="true"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:libCornerRadius="20"
-            app:max="300"
             app:maxImage="@drawable/ic_volume_up_black_48dp"
             app:minImage="@drawable/ic_volume_off_black_48dp"
             app:progressColor="@color/color_progress"
-            app:step="5"
+            app:step="1"
             app:textBottomPadding="20"
             app:textColor="#FF0000"
             app:textEnabled="true"
             app:textSize="12sp"
-            app:touchDisabled="true" />
+            app:touchDisabled="true"
+            tools:defaultValue="0"
+            tools:max="100"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
