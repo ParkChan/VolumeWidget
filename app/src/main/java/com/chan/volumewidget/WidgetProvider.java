@@ -1,5 +1,6 @@
 package com.chan.volumewidget;
 
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -10,7 +11,6 @@ import android.net.Uri;
 import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-
 
 /**
  * Created by mustafa.urgupluoglu on 02/10/17.
