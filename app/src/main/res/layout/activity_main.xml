@@ -34,8 +34,8 @@
             app:textEnabled="true"
             app:textSize="12sp"
             app:touchDisabled="true"
-            tools:defaultValue="0"
-            tools:max="100"
+            tools:defaultValue="5"
+            tools:max="10"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

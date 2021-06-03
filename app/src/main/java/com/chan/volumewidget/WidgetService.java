@@ -9,13 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/*
- *  Created by Mustafa Ürgüplüoğlu on 02.10.2017.
- *  Copyright © 2021 Mustafa Ürgüplüoğlu. All rights reserved.
- */
-
 public final class WidgetService extends RemoteViewsService {
-
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -49,8 +43,6 @@ public final class WidgetService extends RemoteViewsService {
             // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
             // for example downloading or creating content etc, should be deferred to onDataSetChanged()
             // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
-
-
         }
 
         @Override
@@ -81,7 +73,6 @@ public final class WidgetService extends RemoteViewsService {
             // process an image, fetch something from the network, etc., it is ok to do it here,
             // synchronously. A loading view will show up in lieu of the actual contents in the
             // interim.
-
             return rv;
         }
 

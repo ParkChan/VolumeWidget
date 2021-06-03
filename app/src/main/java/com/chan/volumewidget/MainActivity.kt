@@ -42,11 +42,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
-
-        binding.seekBar.setOnBoxedPointsChangeListener(object :
+        var point = 0
+        binding.seekBar.onValuesChangeListener = object :
             VerticalSeekBar.OnValuesChangeListener {
             override fun onPointsChanged(boxedPoints: VerticalSeekBar?, points: Int) {
                 Timber.d("setOnBoxedPointsChangeListener onPointsChanged points : $points")
+                point = points
                 audioManager.setStreamVolume(
                     AudioManager.STREAM_MUSIC,
                     points,
@@ -60,8 +61,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(boxedPoints: VerticalSeekBar?) {
                 Timber.d("setOnBoxedPointsChangeListener onStopTrackingTouch")
-
+                binding.seekBar.value = point
             }
-        })
+        }
     }
 }

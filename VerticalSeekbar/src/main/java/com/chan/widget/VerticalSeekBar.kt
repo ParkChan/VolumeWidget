@@ -1,280 +1,264 @@
-package com.chan.widget;
+package com.chan.widget
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
-import android.graphics.drawable.BitmapDrawable;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-
-import androidx.core.content.ContextCompat;
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 
 /**
  * Created by alpaslanbak on 29/09/2017.
  * Modified by Nick Panagopoulos @npanagop on 12/05/2018.
  */
-public class VerticalSeekBar extends View {
-    private static final String TAG = VerticalSeekBar.class.getSimpleName();
-
-    private static final int MAX = 100;
-    private static final int MIN = 0;
-
+class VerticalSeekBar : LinearLayout {
     /**
      * The min value of progress value.
      */
-    private int mMin = MIN;
+    private var progressMin = MIN
 
     /**
      * The Maximum value that this SeekArc can be set to
      */
-    private int mMax = MAX;
+    private var progressMax = MAX
 
     /**
      * The increment/decrement value for each movement of progress.
      */
-    private int mStep = 10;
+    private var progressStep = 10
 
     /**
      * The corner radius of the view.
      */
-    private int mCornerRadius = 10;
+    private var radius2 = 10
 
     /**
      * Text size in SP.
      */
-    private float mTextSize = 26;
+    private var textSize = 26f
 
     /**
      * Text bottom padding in pixel.
      */
-    private int mtextBottomPadding = 20;
+    private var textPaddingBottom = 20
+    private var points = 0
+    private var enabled = true
 
-    private int mPoints;
-
-    private boolean mEnabled = true;
     /**
      * Enable or disable text .
      */
-    private boolean mtextEnabled = true;
+    private var textEnabled = true
 
     /**
      * Enable or disable image .
      */
-    private boolean mImageEnabled = false;
+    var isImageEnabled = false
 
     /**
      * mTouchDisabled touches will not move the slider
      * only swipe motion will activate it
      */
-    private boolean mTouchDisabled = true;
+    private var touchDisabled = true
+    private var progressSweep = 0f
+    private var progressPaint: Paint? = null
+    private var textPaint: Paint? = null
+    private var scrWidth = 0
+    private var scrHeight = 0
+    var onValuesChangeListener: OnValuesChangeListener? = null
+    private var bgColor = 0
+    private var mDefaultValue = 0
+    private var defaultImage: Bitmap? = null
+    private var minImage: Bitmap? = null
+    private var maxImage: Bitmap? = null
+    private val rect = Rect()
+    private var firstRun = true
 
-    private float mProgressSweep = 0;
-    private Paint mProgressPaint;
-    private Paint mTextPaint;
-    private int scrWidth;
-    private int scrHeight;
-    private OnValuesChangeListener mOnValuesChangeListener;
-    private int backgroundColor;
-    private int mDefaultValue;
-    private Bitmap mDefaultImage;
-    private Bitmap mMinImage;
-    private Bitmap mMaxImage;
-    private Rect dRect = new Rect();
-    private boolean firstRun = true;
-
-    public VerticalSeekBar(Context context) {
-        super(context);
-        init(context, null);
+    constructor(context: Context) : super(context) {
+        init(context, null)
     }
 
-    public VerticalSeekBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(context, attrs)
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        System.out.println("INIT");
-        float density = getResources().getDisplayMetrics().density;
+    private fun init(context: Context, attrs: AttributeSet?) {
+        println("INIT")
+        val density = resources.displayMetrics.density
 
         // Defaults, may need to link this into theme settings
-        int progressColor = ContextCompat.getColor(context, R.color.color_progress);
-        backgroundColor = ContextCompat.getColor(context, R.color.color_background);
-        backgroundColor = ContextCompat.getColor(context, R.color.color_background);
-
-        int textColor = ContextCompat.getColor(context, R.color.color_text);
-        mTextSize = (int) (mTextSize * density);
-        mDefaultValue = mMax / 2;
-
+        var progressColor = ContextCompat.getColor(context, R.color.color_progress)
+        bgColor = ContextCompat.getColor(context, R.color.color_background)
+        bgColor = ContextCompat.getColor(context, R.color.color_background)
+        var textColor = ContextCompat.getColor(context, R.color.color_text)
+        textSize = (textSize * density)
+        mDefaultValue = progressMax / 2
         if (attrs != null) {
-            final TypedArray a = context.obtainStyledAttributes(attrs,
-                    R.styleable.BoxedVertical, 0, 0);
-
-            mPoints = a.getInteger(R.styleable.BoxedVertical_points, mPoints);
-            mMax = a.getInteger(R.styleable.BoxedVertical_max, mMax);
-            mMin = a.getInteger(R.styleable.BoxedVertical_min, mMin);
-            mStep = a.getInteger(R.styleable.BoxedVertical_step, mStep);
-            mDefaultValue = a.getInteger(R.styleable.BoxedVertical_defaultValue, mDefaultValue);
-            mCornerRadius = a.getInteger(R.styleable.BoxedVertical_libCornerRadius, mCornerRadius);
-            mtextBottomPadding = a.getInteger(R.styleable.BoxedVertical_textBottomPadding, mtextBottomPadding);
+            val a = context.obtainStyledAttributes(
+                attrs,
+                R.styleable.BoxedVertical, 0, 0
+            )
+            points = a.getInteger(R.styleable.BoxedVertical_points, points)
+            progressMax = a.getInteger(R.styleable.BoxedVertical_max, progressMax)
+            progressMin = a.getInteger(R.styleable.BoxedVertical_min, progressMin)
+            progressStep = a.getInteger(R.styleable.BoxedVertical_step, progressStep)
+            mDefaultValue = a.getInteger(R.styleable.BoxedVertical_defaultValue, mDefaultValue)
+            radius2 = a.getInteger(R.styleable.BoxedVertical_libCornerRadius, radius2)
+            textPaddingBottom =
+                a.getInteger(R.styleable.BoxedVertical_textBottomPadding, textPaddingBottom)
             //Images
-            mImageEnabled = a.getBoolean(R.styleable.BoxedVertical_imageEnabled, mImageEnabled);
-
-            if (mImageEnabled) {
-                mDefaultImage = ((BitmapDrawable) a.getDrawable(R.styleable.BoxedVertical_defaultImage)).getBitmap();
-                mMinImage = ((BitmapDrawable) a.getDrawable(R.styleable.BoxedVertical_minImage)).getBitmap();
-                mMaxImage = ((BitmapDrawable) a.getDrawable(R.styleable.BoxedVertical_maxImage)).getBitmap();
+            isImageEnabled = a.getBoolean(R.styleable.BoxedVertical_imageEnabled, isImageEnabled)
+            if (isImageEnabled) {
+                defaultImage =
+                    (a.getDrawable(R.styleable.BoxedVertical_defaultImage) as BitmapDrawable?)!!.bitmap
+                minImage =
+                    (a.getDrawable(R.styleable.BoxedVertical_minImage) as BitmapDrawable?)!!.bitmap
+                maxImage =
+                    (a.getDrawable(R.styleable.BoxedVertical_maxImage) as BitmapDrawable?)!!.bitmap
             }
-
-            progressColor = a.getColor(R.styleable.BoxedVertical_progressColor, progressColor);
-            backgroundColor = a.getColor(R.styleable.BoxedVertical_backgroundColor, backgroundColor);
-
-            mTextSize = (int) a.getDimension(R.styleable.BoxedVertical_textSize, mTextSize);
-            textColor = a.getColor(R.styleable.BoxedVertical_textColor, textColor);
-
-            mEnabled = a.getBoolean(R.styleable.BoxedVertical_enabled, mEnabled);
-            mTouchDisabled = a.getBoolean(R.styleable.BoxedVertical_touchDisabled, mTouchDisabled);
-            mtextEnabled = a.getBoolean(R.styleable.BoxedVertical_textEnabled, mtextEnabled);
-
-            mPoints = mDefaultValue;
-
-            a.recycle();
+            progressColor = a.getColor(R.styleable.BoxedVertical_progressColor, progressColor)
+            bgColor = a.getColor(R.styleable.BoxedVertical_backgroundColor, bgColor)
+            textSize = a.getDimension(R.styleable.BoxedVertical_textSize, textSize)
+            textColor = a.getColor(R.styleable.BoxedVertical_textColor, textColor)
+            enabled = a.getBoolean(R.styleable.BoxedVertical_enabled, enabled)
+            touchDisabled = a.getBoolean(R.styleable.BoxedVertical_touchDisabled, touchDisabled)
+            textEnabled = a.getBoolean(R.styleable.BoxedVertical_textEnabled, textEnabled)
+            points = mDefaultValue
+            a.recycle()
         }
 
         // range check
-        mPoints = (mPoints > mMax) ? mMax : mPoints;
-        mPoints = (mPoints < mMin) ? mMin : mPoints;
-
-        mProgressPaint = new Paint();
-        mProgressPaint.setColor(progressColor);
-        mProgressPaint.setAntiAlias(true);
-        mProgressPaint.setStyle(Paint.Style.STROKE);
-
-        mTextPaint = new Paint();
-        mTextPaint.setColor(textColor);
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setTextSize(mTextSize);
-
-        scrHeight = context.getResources().getDisplayMetrics().heightPixels;
-
+        points = if (points > progressMax) progressMax else points
+        points = if (points < progressMin) progressMin else points
+        progressPaint = Paint()
+        progressPaint!!.color = progressColor
+        progressPaint!!.isAntiAlias = true
+        progressPaint!!.style = Paint.Style.STROKE
+        textPaint = Paint()
+        textPaint!!.color = textColor
+        textPaint!!.isAntiAlias = true
+        textPaint!!.style = Paint.Style.FILL
+        textPaint!!.textSize = textSize
+        scrHeight = context.resources.displayMetrics.heightPixels
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        scrWidth = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        scrHeight = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
-        mProgressPaint.setStrokeWidth(scrWidth);
-
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        scrWidth = getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
+        scrHeight = getDefaultSize(suggestedMinimumHeight, heightMeasureSpec)
+        progressPaint!!.strokeWidth = scrWidth.toFloat()
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Paint paint = new Paint();
-
-        paint.setAlpha(255);
-        canvas.translate(0, 0);
-        Path mPath = new Path();
-        mPath.addRoundRect(new RectF(0, 0, scrWidth, scrHeight), mCornerRadius, mCornerRadius, Path.Direction.CCW);
-        canvas.clipPath(mPath, Region.Op.INTERSECT);
-        paint.setColor(backgroundColor);
-        paint.setAntiAlias(true);
-        canvas.drawRect(0, 0, scrWidth, scrHeight, paint);
-
-        canvas.drawLine(canvas.getWidth() / 2, canvas.getHeight(), canvas.getWidth() / 2, mProgressSweep, mProgressPaint);
-
-        if (mImageEnabled && mDefaultImage != null && mMinImage != null && mMaxImage != null) {
+    override fun onDraw(canvas: Canvas) {
+        val paint = Paint()
+        paint.alpha = 255
+        canvas.translate(0f, 0f)
+        val mPath = Path()
+        mPath.addRoundRect(
+            RectF(0f, 0f, scrWidth.toFloat(), scrHeight.toFloat()),
+            radius2.toFloat(),
+            radius2.toFloat(),
+            Path.Direction.CCW
+        )
+        canvas.clipPath(mPath, Region.Op.INTERSECT)
+        paint.color = bgColor
+        paint.isAntiAlias = true
+        canvas.drawRect(0f, 0f, scrWidth.toFloat(), scrHeight.toFloat(), paint)
+        canvas.drawLine(
+            (canvas.width / 2).toFloat(),
+            canvas.height.toFloat(),
+            (canvas.width / 2).toFloat(),
+            progressSweep,
+            progressPaint!!
+        )
+        if (isImageEnabled && defaultImage != null && minImage != null && maxImage != null) {
             //If image is enabled, text will not be shown
-            if (mPoints == mMax) {
-                drawIcon(mMaxImage, canvas);
-            } else if (mPoints == mMin) {
-                drawIcon(mMinImage, canvas);
+            if (points == progressMax) {
+                drawIcon(maxImage!!, canvas)
+            } else if (points == progressMin) {
+                drawIcon(minImage!!, canvas)
             } else {
-                drawIcon(mDefaultImage, canvas);
+                drawIcon(defaultImage!!, canvas)
             }
         } else {
             //If image is disabled and text is enabled show text
-            if (mtextEnabled) {
-                String strPoint = String.valueOf(mPoints);
-                drawText(canvas, mTextPaint, strPoint);
+            if (textEnabled) {
+                val strPoint = points.toString()
+                drawText(canvas, textPaint, strPoint)
             }
         }
-
         if (firstRun) {
-            firstRun = false;
-            setValue(mPoints);
+            firstRun = false
+            value = points
         }
     }
 
-    private void drawText(Canvas canvas, Paint paint, String text) {
-        canvas.getClipBounds(dRect);
-        int cWidth = dRect.width();
-        paint.setTextAlign(Paint.Align.LEFT);
-        paint.getTextBounds(text, 0, text.length(), dRect);
-        float x = cWidth / 2f - dRect.width() / 2f - dRect.left;
-        canvas.drawText(text, x, canvas.getHeight() - mtextBottomPadding, paint);
+    private fun drawText(canvas: Canvas, paint: Paint?, text: String) {
+        canvas.getClipBounds(rect)
+        val cWidth = rect.width()
+        paint!!.textAlign = Paint.Align.LEFT
+        paint.getTextBounds(text, 0, text.length, rect)
+        val x = cWidth / 2f - rect.width() / 2f - rect.left
+        canvas.drawText(text, x, (canvas.height - textPaddingBottom).toFloat(), paint)
     }
 
-    private void drawIcon(Bitmap bitmap, Canvas canvas) {
-        bitmap = getResizedBitmap(bitmap, canvas.getWidth() / 2, canvas.getWidth() / 2);
-        canvas.drawBitmap(bitmap, null, new RectF((canvas.getWidth() / 2) - (bitmap.getWidth() / 2), canvas.getHeight() - bitmap.getHeight(), (canvas.getWidth() / 3) + bitmap.getWidth(), canvas.getHeight()), null);
+    private fun drawIcon(bitmap: Bitmap, canvas: Canvas) {
+        var bitmap = bitmap
+        bitmap = getResizedBitmap(bitmap, canvas.width / 2, canvas.width / 2)
+        canvas.drawBitmap(
+            bitmap, null, RectF(
+                (canvas.width / 2 - bitmap.width / 2).toFloat(),
+                (canvas.height - bitmap.height).toFloat(),
+                (canvas.width / 3 + bitmap.width).toFloat(),
+                canvas.height
+                    .toFloat()
+            ), null
+        )
     }
 
-    private Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+    private fun getResizedBitmap(bm: Bitmap, newHeight: Int, newWidth: Int): Bitmap {
         //Thanks Piyush
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
+        val width = bm.width
+        val height = bm.height
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
         // create a matrix for the manipulation
-        Matrix matrix = new Matrix();
+        val matrix = Matrix()
         // resize the bit map
-        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.postScale(scaleWidth, scaleHeight)
         // recreate the new Bitmap
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false)
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (mEnabled) {
-
-            this.getParent().requestDisallowInterceptTouchEvent(true);
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (mOnValuesChangeListener != null)
-                        mOnValuesChangeListener.onStartTrackingTouch(this);
-
-                    if (!mTouchDisabled)
-                        updateOnTouch(event);
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    updateOnTouch(event);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (mOnValuesChangeListener != null)
-                        mOnValuesChangeListener.onStopTrackingTouch(this);
-                    setPressed(false);
-                    this.getParent().requestDisallowInterceptTouchEvent(false);
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    if (mOnValuesChangeListener != null)
-                        mOnValuesChangeListener.onStopTrackingTouch(this);
-                    setPressed(false);
-                    this.getParent().requestDisallowInterceptTouchEvent(false);
-                    break;
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (enabled) {
+            this.parent.requestDisallowInterceptTouchEvent(true)
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (onValuesChangeListener != null) onValuesChangeListener!!.onStartTrackingTouch(
+                        this
+                    )
+                    if (!touchDisabled) updateOnTouch(event)
+                }
+                MotionEvent.ACTION_MOVE -> updateOnTouch(event)
+                MotionEvent.ACTION_UP -> {
+                    if (onValuesChangeListener != null) onValuesChangeListener!!.onStopTrackingTouch(
+                        this
+                    )
+                    isPressed = false
+                    this.parent.requestDisallowInterceptTouchEvent(false)
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    if (onValuesChangeListener != null) onValuesChangeListener!!.onStopTrackingTouch(
+                        this
+                    )
+                    isPressed = false
+                    this.parent.requestDisallowInterceptTouchEvent(false)
+                }
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -282,49 +266,45 @@ public class VerticalSeekBar extends View {
      *
      * @param event MotionEvent
      */
-    private void updateOnTouch(MotionEvent event) {
-        setPressed(true);
-        double mTouch = convertTouchEventPoint(event.getY());
-        int progress = (int) Math.round(mTouch);
-        updateProgress(progress);
+    private fun updateOnTouch(event: MotionEvent) {
+        isPressed = true
+        val mTouch = convertTouchEventPoint(event.y)
+        val progress = Math.round(mTouch).toInt()
+        updateProgress(progress)
     }
 
-    private double convertTouchEventPoint(float yPos) {
-        float wReturn;
-
-        if (yPos > (scrHeight * 2)) {
-            wReturn = scrHeight * 2;
-            return wReturn;
+    private fun convertTouchEventPoint(yPos: Float): Double {
+        val wReturn: Float
+        if (yPos > scrHeight * 2) {
+            wReturn = (scrHeight * 2).toFloat()
+            return wReturn.toDouble()
         } else if (yPos < 0) {
-            wReturn = 0;
+            wReturn = 0f
         } else {
-            wReturn = yPos;
+            wReturn = yPos
         }
-
-        return wReturn;
+        return wReturn.toDouble()
     }
 
-    private void updateProgress(int progress) {
-        mProgressSweep = progress;
-
-        progress = (progress > scrHeight) ? scrHeight : progress;
-        progress = (progress < 0) ? 0 : progress;
+    private fun updateProgress(progress: Int) {
+        var progress = progress
+        progressSweep = progress.toFloat()
+        progress = if (progress > scrHeight) scrHeight else progress
+        progress = if (progress < 0) 0 else progress
 
         //convert progress to min-max range
-        mPoints = progress * (mMax - mMin) / scrHeight + mMin;
+        points = progress * (progressMax - progressMin) / scrHeight + progressMin
         //reverse value because progress is descending
-        mPoints = mMax + mMin - mPoints;
+        points = progressMax + progressMin - points
         //if value is not max or min, apply step
-        if (mPoints != mMax && mPoints != mMin) {
-            mPoints = mPoints - (mPoints % mStep) + (mMin % mStep);
+        if (points != progressMax && points != progressMin) {
+            points = points - points % progressStep + progressMin % progressStep
         }
-
-        if (mOnValuesChangeListener != null) {
-            mOnValuesChangeListener
-                    .onPointsChanged(this, mPoints);
+        if (onValuesChangeListener != null) {
+            onValuesChangeListener!!
+                .onPointsChanged(this, points)
         }
-
-        invalidate();
+        invalidate()
     }
 
     /**
@@ -332,105 +312,76 @@ public class VerticalSeekBar extends View {
      *
      * @param value The value given
      */
-    private void updateProgressByValue(int value) {
-        mPoints = value;
-
-        mPoints = (mPoints > mMax) ? mMax : mPoints;
-        mPoints = (mPoints < mMin) ? mMin : mPoints;
+    private fun updateProgressByValue(value: Int) {
+        points = value
+        points = if (points > progressMax) progressMax else points
+        points = if (points < progressMin) progressMin else points
 
         //convert min-max range to progress
-        mProgressSweep = (mPoints - mMin) * scrHeight / (mMax - mMin);
+        progressSweep =
+            ((points - progressMin) * scrHeight / (progressMax - progressMin)).toFloat()
         //reverse value because progress is descending
-        mProgressSweep = scrHeight - mProgressSweep;
-
-        if (mOnValuesChangeListener != null) {
-            mOnValuesChangeListener
-                    .onPointsChanged(this, mPoints);
+        progressSweep = scrHeight - progressSweep
+        if (onValuesChangeListener != null) {
+            onValuesChangeListener!!
+                .onPointsChanged(this, points)
         }
-
-        invalidate();
+        invalidate()
     }
 
-    public interface OnValuesChangeListener {
+    interface OnValuesChangeListener {
         /**
          * Notification that the point value has changed.
          *
          * @param boxedPoints The SwagPoints view whose value has changed
          * @param points      The current point value.
          */
-        void onPointsChanged(VerticalSeekBar boxedPoints, int points);
-
-        void onStartTrackingTouch(VerticalSeekBar boxedPoints);
-
-        void onStopTrackingTouch(VerticalSeekBar boxedPoints);
+        fun onPointsChanged(boxedPoints: VerticalSeekBar?, points: Int)
+        fun onStartTrackingTouch(boxedPoints: VerticalSeekBar?)
+        fun onStopTrackingTouch(boxedPoints: VerticalSeekBar?)
     }
 
-    public void setValue(int points) {
-        points = points > mMax ? mMax : points;
-        points = points < mMin ? mMin : points;
-
-        updateProgressByValue(points);
+    override fun isEnabled(): Boolean {
+        return enabled
     }
 
-    public int getValue() {
-        return mPoints;
+    override fun setEnabled(enabled: Boolean) {
+        this.enabled = enabled
     }
 
-    public boolean isEnabled() {
-        return mEnabled;
-    }
+    var value: Int
+        get() = points
+        set(points) {
+            var points = points
+            points = if (points > progressMax) progressMax else points
+            points = if (points < progressMin) progressMin else points
+            updateProgressByValue(points)
+        }
 
-    public void setEnabled(boolean enabled) {
-        this.mEnabled = enabled;
-    }
+    var max: Int
+        get() = progressMax
+        set(mMax) {
+            require(mMax > progressMin) { "Max should not be less than zero" }
+            this.progressMax = mMax
+        }
 
-    public int getMax() {
-        return mMax;
-    }
+    var cornerRadius: Int
+        get() = radius2
+        set(mRadius) {
+            radius2 = mRadius
+            invalidate()
+        }
 
-    public void setMax(int mMax) {
-        if (mMax <= mMin)
-            throw new IllegalArgumentException("Max should not be less than zero");
-        this.mMax = mMax;
-    }
+    var defaultValue: Int
+        get() = mDefaultValue
+        set(mDefaultValue) {
+            require(mDefaultValue <= progressMax) { "Default value should not be bigger than max value." }
+            this.mDefaultValue = mDefaultValue
+        }
 
-    public void setCornerRadius(int mRadius) {
-        this.mCornerRadius = mRadius;
-        invalidate();
-    }
-
-    public int getCornerRadius() {
-        return mCornerRadius;
-    }
-
-    public int getDefaultValue() {
-        return mDefaultValue;
-    }
-
-    public void setDefaultValue(int mDefaultValue) {
-        if (mDefaultValue > mMax)
-            throw new IllegalArgumentException("Default value should not be bigger than max value.");
-        this.mDefaultValue = mDefaultValue;
-
-    }
-
-    public int getStep() {
-        return mStep;
-    }
-
-    public void setStep(int step) {
-        mStep = step;
-    }
-
-    public boolean isImageEnabled() {
-        return mImageEnabled;
-    }
-
-    public void setImageEnabled(boolean mImageEnabled) {
-        this.mImageEnabled = mImageEnabled;
-    }
-
-    public void setOnBoxedPointsChangeListener(OnValuesChangeListener onValuesChangeListener) {
-        mOnValuesChangeListener = onValuesChangeListener;
+    companion object {
+        private val TAG = VerticalSeekBar::class.java.simpleName
+        private const val MAX = 100
+        private const val MIN = 0
     }
 }

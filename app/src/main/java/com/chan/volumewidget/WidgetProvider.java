@@ -12,10 +12,6 @@ import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-/**
- * Created by mustafa.urgupluoglu on 02/10/17.
- */
-
 public class WidgetProvider extends AppWidgetProvider {
 
     public static final String EXTRA_CLICKED_FILE = "EXTRA_CLICKED_FILE";
@@ -23,15 +19,6 @@ public class WidgetProvider extends AppWidgetProvider {
     private static final String LIST_ITEM_CLICKED_ACTION = "LIST_ITEM_CLICKED_ACTION";
     private static final String REFRESH_WIDGET_ACTION = "REFRESH_WIDGET_ACTION";
 
-    /**
-     * "This is called to update the App Widget at intervals defined by the updatePeriodMillis attribute in the
-     * AppWidgetProviderInfo (see Adding the AppWidgetProviderInfo Metadata above). This method is also called when the
-     * user adds the App Widget, so it should perform the essential setup, such as define event handlers for Views and
-     * start a temporary Service, if necessary. However, if you have declared a configuration Activity, this method is
-     * not called when the user adds the App Widget, but is called for the subsequent updates. It is the responsibility
-     * of the configuration Activity to perform the first update when configuration is done. (See Creating an App Widget
-     * Configuration Activity below.)"
-     */
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -71,6 +58,8 @@ public class WidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, rv);
         }
     }
+
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
