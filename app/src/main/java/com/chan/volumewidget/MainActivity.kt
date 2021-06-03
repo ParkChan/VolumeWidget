@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         var point = 0
         binding.seekBar.onValuesChangeListener = object :
             VerticalSeekBar.OnValuesChangeListener {
+
             override fun onPointsChanged(boxedPoints: VerticalSeekBar?, points: Int) {
                 Timber.d("setOnBoxedPointsChangeListener onPointsChanged points : $points")
                 point = points
