@@ -12,6 +12,8 @@ import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import timber.log.Timber;
+
 public class WidgetProvider extends AppWidgetProvider {
 
     public static final String EXTRA_CLICKED_FILE = "EXTRA_CLICKED_FILE";
@@ -21,6 +23,8 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        Timber.d("onUpdate >>> ");
         for (int appWidgetId : appWidgetIds) {
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
