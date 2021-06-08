@@ -12,8 +12,6 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -54,7 +52,6 @@ dependencies {
     implementation "com.jakewharton.timber:timber:4.7.1"
 
     //TestConfig
-    // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.1"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.1"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.7.1"

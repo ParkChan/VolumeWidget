@@ -12,14 +12,9 @@
         android:layout_weight="1"
         android:background="#ffffff"
         android:gravity="center"
-        android:text="+"
-        android:textSize="30sp" />
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="80dp"
-        android:background="#ffffff" />
-
+        android:text="Volume↑"
+        android:textSize="20sp"
+        />
     <Button
         android:id="@+id/btn_minus"
         android:layout_width="0dp"
@@ -27,7 +22,8 @@
         android:layout_weight="1"
         android:background="#ffffff"
         android:gravity="center"
-        android:text="-"
-        android:textSize="30sp" />
+        android:text="Volume↓"
+        android:textSize="20sp"
+        />
 
 </LinearLayout>
