@@ -13,7 +13,9 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val audioManager: AudioManager by lazy { getSystemService(Context.AUDIO_SERVICE) as AudioManager }
+    private val audioManager: AudioManager by lazy {
+        getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
     }
 
-    private fun initSeekBar(){
+    private fun initSeekBar() {
         val maxMusicVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val presentMusicVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 

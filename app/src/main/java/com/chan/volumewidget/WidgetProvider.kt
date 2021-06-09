@@ -3,62 +3,97 @@ package com.chan.volumewidget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
+import android.content.Context.AUDIO_SERVICE
 import android.content.Intent
-import android.net.Uri
+import android.media.AudioManager
 import android.widget.RemoteViews
 import timber.log.Timber
 
 
 class WidgetProvider : AppWidgetProvider() {
 
-    private val MY_ACTION = "android.action.MY_ACTION"
-
     override fun onUpdate(
-            context: Context,
-            appWidgetManager: AppWidgetManager,
-            appWidgetIds: IntArray
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
     ) {
         Timber.d("onUpdate >>> ")
-        val thisWidget = ComponentName(context, WidgetProvider::class.java)
-        val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
 
-        for (widgetId in allWidgetIds) {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout)
-            views.setOnClickPendingIntent(R.id.btn_plus, setMyAction(context))
-            views.setOnClickPendingIntent(R.id.btn_minus, buildURIIntent(context))
+        appWidgetIds.forEach { _ ->
+            val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
+                setOnClickPendingIntent(R.id.btn_plus, volumeUpPendingIntent(context))
+                setOnClickPendingIntent(R.id.btn_minus, volumeDownPendingIntent(context))
+            }
             appWidgetManager.updateAppWidget(appWidgetIds, views)
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Timber.d("onReceive >>> ${intent.data}")
-        val action = intent.action
-//        if (action == MY_ACTION) {
-//            //버튼 클릭 결과를 로그로 확인합니다.
-//            Timber.d("onReceive >>> 이벤트클릭 테스트")
-//            val appWidgetManager = AppWidgetManager.getInstance(context)
-//            val remoteViews = RemoteViews(context.packageName, R.layout.widget_layout)
-//            val componentName = ComponentName(context, WidgetProvider::class.java)
-//            remoteViews.setTextViewText(R.id.btn_plus, "이벤트발생!")
-//            appWidgetManager.updateAppWidget(componentName, remoteViews)
-//        }
+        Timber.d("onReceive >>> $intent")
+        when (intent.action) {
+            WidgetBroadCast.VOLUME_UP.toString() -> {
+                Timber.d("volume is up 1")
+                musicVolumeControl(context, true)
+            }
+            WidgetBroadCast.VOLUME_DOWN.toString() -> {
+                Timber.d("volume is down 1")
+                musicVolumeControl(context, false)
+            }
+        }
     }
 
-    private fun setMyAction(context: Context?): PendingIntent {
-        Timber.d("PendingIntent setMyAction >>> ")
-        val intent = Intent(MY_ACTION)
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun volumeUpPendingIntent(context: Context): PendingIntent {
+        return Intent(context, WidgetProvider::class.java).let { intent ->
+            intent.action = WidgetBroadCast.VOLUME_UP.toString()
+            PendingIntent.getBroadcast(
+                context,
+                0,
+                intent, PendingIntent.FLAG_CANCEL_CURRENT
+            )
+        }
     }
 
-    private fun buildURIIntent(context: Context?): PendingIntent {
-        Timber.d("PendingIntent buildURIIntent >>> ")
-        val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://parkbeommin.github.io"))
-        return PendingIntent.getActivity(context, 0, intent, 0)
+    private fun volumeDownPendingIntent(context: Context): PendingIntent {
+        return Intent(context, WidgetProvider::class.java).let { intent ->
+            intent.action = WidgetBroadCast.VOLUME_DOWN.toString()
+            PendingIntent.getBroadcast(
+                context,
+                0,
+                intent, PendingIntent.FLAG_CANCEL_CURRENT
+            )
+        }
     }
 
+    private fun musicVolumeControl(context: Context, isPlus: Boolean) {
+        val audioManager: AudioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val minVolume = 0
+        val presentMusicVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
+        Timber.d("musicVolumeControl >>> minVolume is $minVolume maxVolume is $maxVolume")
+        Timber.d("musicVolumeControl >>> presentMusicVolume is $presentMusicVolume")
 
+        val resultVolume = if(isPlus){
+            if (presentMusicVolume >= maxVolume){
+                maxVolume
+            }else{
+                presentMusicVolume + 1
+            }
+
+        }else{
+            if (presentMusicVolume <= minVolume) {
+                minVolume
+            }else{
+                presentMusicVolume - 1
+            }
+        }
+
+        audioManager.setStreamVolume(
+            AudioManager.STREAM_MUSIC,
+            resultVolume,
+            AudioManager.FLAG_SHOW_UI
+        )
+    }
 }
