@@ -11,7 +11,7 @@
 
         <com.chan.widget.VerticalSeekBar
             android:id="@+id/seek_bar"
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
@@ -19,6 +19,7 @@
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
+            android:background="#00000000"
             app:backgroundColor="@color/color_background"
             app:defaultImage="@drawable/ic_volume_down_black_48dp"
             app:imageEnabled="true"
@@ -35,8 +36,7 @@
             app:textSize="12sp"
             app:touchDisabled="true"
             tools:defaultValue="5"
-            tools:max="10"
-            />
+            tools:max="10" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

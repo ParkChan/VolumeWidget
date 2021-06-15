@@ -46,15 +46,15 @@ class MainActivity : AppCompatActivity() {
     private fun initListener() {
         var point = 0
         binding.seekBar.onValuesChangeListener = object :
-            VerticalSeekBar.OnValuesChangeListener {
+                VerticalSeekBar.OnValuesChangeListener {
 
             override fun onPointsChanged(boxedPoints: VerticalSeekBar?, points: Int) {
                 Timber.d("setOnBoxedPointsChangeListener onPointsChanged points : $points")
                 point = points
                 audioManager.setStreamVolume(
-                    AudioManager.STREAM_MUSIC,
-                    points,
-                    AudioManager.FLAG_PLAY_SOUND
+                        AudioManager.STREAM_MUSIC,
+                        points,
+                        AudioManager.FLAG_SHOW_UI
                 )
             }
 

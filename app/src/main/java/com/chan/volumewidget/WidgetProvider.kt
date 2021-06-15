@@ -14,9 +14,9 @@ import timber.log.Timber
 class WidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetIds: IntArray
     ) {
         Timber.d("onUpdate >>> ")
 
@@ -48,9 +48,9 @@ class WidgetProvider : AppWidgetProvider() {
         return Intent(context, WidgetProvider::class.java).let { intent ->
             intent.action = WidgetBroadCast.VOLUME_UP.toString()
             PendingIntent.getBroadcast(
-                context,
-                0,
-                intent, PendingIntent.FLAG_CANCEL_CURRENT
+                    context,
+                    0,
+                    intent, PendingIntent.FLAG_CANCEL_CURRENT
             )
         }
     }
@@ -59,9 +59,9 @@ class WidgetProvider : AppWidgetProvider() {
         return Intent(context, WidgetProvider::class.java).let { intent ->
             intent.action = WidgetBroadCast.VOLUME_DOWN.toString()
             PendingIntent.getBroadcast(
-                context,
-                0,
-                intent, PendingIntent.FLAG_CANCEL_CURRENT
+                    context,
+                    0,
+                    intent, PendingIntent.FLAG_CANCEL_CURRENT
             )
         }
     }
@@ -75,25 +75,16 @@ class WidgetProvider : AppWidgetProvider() {
         Timber.d("musicVolumeControl >>> minVolume is $minVolume maxVolume is $maxVolume")
         Timber.d("musicVolumeControl >>> presentMusicVolume is $presentMusicVolume")
 
-        val resultVolume = if(isPlus){
-            if (presentMusicVolume >= maxVolume){
-                maxVolume
-            }else{
-                presentMusicVolume + 1
-            }
-
-        }else{
-            if (presentMusicVolume <= minVolume) {
-                minVolume
-            }else{
-                presentMusicVolume - 1
-            }
+        val volume = if (isPlus) {
+            AudioManager.ADJUST_RAISE
+        } else {
+            AudioManager.ADJUST_LOWER
         }
 
-        audioManager.setStreamVolume(
-            AudioManager.STREAM_MUSIC,
-            resultVolume,
-            AudioManager.FLAG_SHOW_UI
+        audioManager.adjustStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                volume,
+                0
         )
     }
 }
