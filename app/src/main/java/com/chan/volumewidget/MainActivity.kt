@@ -1,8 +1,11 @@
 package com.chan.volumewidget
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.chan.volumewidget.databinding.ActivityMainBinding
@@ -65,7 +68,17 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(boxedPoints: VerticalSeekBar?) {
                 Timber.d("setOnBoxedPointsChangeListener onStopTrackingTouch")
                 binding.seekBar.value = point
+                vibrator(this@MainActivity)
             }
         }
+    }
+
+    private fun vibrator(context: Context) {
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val audioAttributes = AudioAttributes.Builder().build()
+        vibrator.vibrate(VibrationEffect.createOneShot(
+                200,
+                VibrationEffect.DEFAULT_AMPLITUDE
+        ), audioAttributes)
     }
 }

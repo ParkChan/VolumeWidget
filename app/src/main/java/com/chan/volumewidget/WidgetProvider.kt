@@ -3,6 +3,7 @@ package com.chan.volumewidget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Context.AUDIO_SERVICE
 import android.content.Intent
@@ -66,7 +67,7 @@ class WidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun musicVolumeControl(context: Context, isPlus: Boolean) {
+    private fun musicVolumeControl(context: Context, isRaise: Boolean) {
         val audioManager: AudioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val minVolume = 0
@@ -75,7 +76,7 @@ class WidgetProvider : AppWidgetProvider() {
         Timber.d("musicVolumeControl >>> minVolume is $minVolume maxVolume is $maxVolume")
         Timber.d("musicVolumeControl >>> presentMusicVolume is $presentMusicVolume")
 
-        val volume = if (isPlus) {
+        val volume = if (isRaise) {
             AudioManager.ADJUST_RAISE
         } else {
             AudioManager.ADJUST_LOWER
@@ -86,5 +87,17 @@ class WidgetProvider : AppWidgetProvider() {
                 volume,
                 0
         )
+
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val thisWidget = ComponentName(context, WidgetProvider::class.java)
+        val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
+
+        allWidgetIds.forEach { _ ->
+            val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
+                setOnClickPendingIntent(R.id.btn_plus, volumeUpPendingIntent(context))
+                setOnClickPendingIntent(R.id.btn_minus, volumeDownPendingIntent(context))
+            }
+            appWidgetManager.updateAppWidget(allWidgetIds, views)
+        }
     }
 }
