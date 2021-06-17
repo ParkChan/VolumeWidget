@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="160dp"
+    android:layout_width="140dp"
+    android:layout_height="120dp"
     android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
     <Button
         android:id="@+id/btn_plus"
-        android:layout_width="140dp"
-        android:layout_height="80dp"
-        android:background="@color/bg_selected_widget_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:textColor="@color/text_selected_widget_button"
+        android:background="@drawable/bg_selected_widget_button"
         android:gravity="center"
         android:text="Volume▲"
         android:textAllCaps="false"
@@ -18,10 +18,10 @@
 
     <Button
         android:id="@+id/btn_minus"
-        android:layout_width="140dp"
-        android:layout_height="80dp"
-        android:background="@color/bg_selected_widget_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:textColor="@color/text_selected_widget_button"
+        android:background="@drawable/bg_selected_widget_button"
         android:gravity="center"
         android:text="Volume▼"
         android:textAllCaps="false"

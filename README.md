@@ -7,6 +7,7 @@
 * [도움이 된 자료1](https://parkbeommin.github.io/android/android-widget)
 * [도움이 된 자료2](https://velog.io/@jshme/how-to-use-appwidgetprovider-in-android)
 * [Seekbar](https://github.com/alpbak/BoxedVerticalSeekBar)
+* [앱 아이콘 제공](https://romannurik.github.io/AndroidAssetStudio/index.html)
 
 ## 적용 기술
 
