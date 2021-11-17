@@ -68,17 +68,7 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(boxedPoints: VerticalSeekBar?) {
                 Timber.d("setOnBoxedPointsChangeListener onStopTrackingTouch")
                 binding.seekBar.value = point
-                vibrator(this@MainActivity)
             }
         }
-    }
-
-    private fun vibrator(context: Context) {
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        val audioAttributes = AudioAttributes.Builder().build()
-        vibrator.vibrate(VibrationEffect.createOneShot(
-                200,
-                VibrationEffect.DEFAULT_AMPLITUDE
-        ), audioAttributes)
     }
 }
